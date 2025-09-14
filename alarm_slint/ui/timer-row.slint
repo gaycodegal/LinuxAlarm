@@ -1,0 +1,26 @@
+import { Button, HorizontalBox } from "std-widgets.slint";
+
+export struct TimerData {
+//    targetDate: int,
+}
+
+export component TimerRow inherits Rectangle {
+    in-out property<TimerData> data;
+    callback request-increase-value();
+	background: red;
+    HorizontalBox {
+		height: 60px;
+		Rectangle {
+			background: blue;
+			Text {
+				text: "5:42";
+			}
+		}
+        Button {
+            text: "Edit";
+        }
+        Button {
+            text: "Delete";
+        }
+     }
+}

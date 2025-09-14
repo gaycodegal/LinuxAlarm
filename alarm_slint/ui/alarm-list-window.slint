@@ -1,0 +1,25 @@
+import { ListView, VerticalBox } from "std-widgets.slint";
+import { TimerRow, TimerData } from "timer-row.slint";
+
+export component AlarmListWindow inherits Window {
+    in property<[TimerData]> timer-list: [{}, {}];
+
+    callback key-pressed(KeyEvent) -> bool;
+	min-width: 320px;
+	min-height: 480px;
+
+	forward-focus: window-focus-scope;
+    window-focus-scope := FocusScope {
+		key-pressed(event) => {
+			return root.key-pressed(event) ? accept : reject;
+		}
+		
+		
+		VerticalBox {
+			ListView {
+				for data[i] in timer_list
+				: TimerRow { }
+			}
+		}
+	}
+}
