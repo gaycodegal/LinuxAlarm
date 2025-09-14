@@ -6,12 +6,9 @@ export struct TimerData {
 
 export component TimerRow inherits Rectangle {
     in-out property<TimerData> data;
-    callback request-increase-value();
-	background: red;
     HorizontalBox {
 		height: 60px;
 		Rectangle {
-			background: blue;
 			Text {
 				text: "5:42";
 			}
