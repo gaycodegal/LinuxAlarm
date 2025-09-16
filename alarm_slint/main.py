@@ -125,7 +125,8 @@ if __name__ == "__main__":
         '--alarm',
         help='alarm duration in seconds',
         action='append',
-        type=int)
+        type=int,
+        default=[])
     
     parser.add_argument(
         '--escape-quits',
