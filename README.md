@@ -15,8 +15,14 @@ Tested with the linux screen reader orca, verified it was usable.
 
 ## Installation
 
+```bash
 pip3 install playsound3
 pip3 install slint
+```
+
+Please note the python3-playsound3 package for ubuntu has
+a different api than the one available via pip, and will
+not work right with this codebase
 
 ## Running
 
