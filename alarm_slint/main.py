@@ -1,5 +1,4 @@
 import slint
-from slint import slint as native
 import sys
 import os
 import uuid
