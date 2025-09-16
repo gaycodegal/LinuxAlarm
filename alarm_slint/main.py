@@ -10,8 +10,8 @@ import uuid
 import datetime
 from datetime import timedelta
 from datetime import datetime
-import argparse
-from time_helpers import get_nth, convert_times_to_durations, play_time_sound, update_display_time
+from time_helpers import get_nth, play_time_sound, update_display_time
+from command_line_helpers import parse_args
 
 try:
     slint.loader.ui.alarm_list_window.AlarmListWindow
@@ -25,19 +25,23 @@ args = None
 global_timers = [5]
 
 class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
-    def __init__(self):
+    def __init__(self, timers = []):
         super().__init__()
+        self.timers = []
+        self.add_timers(timers)
+        self.time_tick()
+
+    def add_timers(self, timers):
         now = datetime.now()
         now = now - timedelta(microseconds=now.microsecond)
-        self.timers = [{
+
+        new_timers = [{
             "id": str(uuid.uuid4()),
             "duration": timedelta(seconds=duration),
             "start": now,
             "sound": get_nth(args.alarm_sound, index)
-        } for index, duration in enumerate(global_timers)]
-        
-
-        self.time_tick()
+        } for index, duration in enumerate(timers)]
+        self.timers.extend(new_timers)
 
     def set_elapsed_time(self):
         now = datetime.now()
@@ -97,30 +101,10 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
         return False
     
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        '-s', '--alarm-sound',
-        help='Audio file to be played back, including this argument '
-        + 'multiple times will result in per-timer alarm sound',
-        action='append',
-        default=[])
-    parser.add_argument(
-        '-a', '--alarm',
-        help="Alarm duration. e.g. '4h 30m 20s'. Numbers "
-        + "without units like '100' will be interpreted as 100 seconds",
-        action='append',
-        type = str,
-        default=[])
-    
-    parser.add_argument(
-        '--escape-quits',
-        help='Should the escape key quit this app',
-        action=argparse.BooleanOptionalAction,
-        default=True)
-    args = parser.parse_args()
+    args = parse_args(__doc__)
     if len(args.alarm) > 0:
-        global_timers = convert_times_to_durations(args.alarm)
-    alarm_list_window = AlarmListWindow()
+        global_timers = args.alarm
+    alarm_list_window = AlarmListWindow(global_timers)
     alarm_list_window.show()
     alarm_list_window.run()
 
