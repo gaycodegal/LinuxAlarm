@@ -42,12 +42,19 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             done = update_display_time(now, timer)
             if done:
                 play_time_sound(timer)
-        self.timer_list = slint.ListModel()
-        for timer in self.timers:
-            self.timer_list.append({
-                "id": timer["id"],
-                "time-left": timer["time-left"],
-            })
+        if self.timer_list.row_count() == len(self.timers):
+            for i, timer in enumerate(self.timers):
+                self.timer_list.set_row_data(i, {
+                    "id": timer["id"],
+                    "time-left": timer["time-left"],
+                })
+        else:
+            self.timer_list = slint.ListModel()
+            for timer in self.timers:
+                self.timer_list.append({
+                    "id": timer["id"],
+                    "time-left": timer["time-left"],
+                })
 
     def time_tick(self):
         now = datetime.now()

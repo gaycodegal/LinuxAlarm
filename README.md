@@ -9,6 +9,10 @@ programs that may wish to set an alarm programatically, like a digital
 assistant, and have the alarm visually displayed to a user and manually
 cancelable.
 
+## A11y
+
+Tested with the linux screen reader orca, verified it was usable.
+
 ## Installation
 
 pip3 install playsound3
