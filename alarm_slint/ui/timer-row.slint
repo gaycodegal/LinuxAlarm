@@ -1,23 +1,42 @@
 import { Button, HorizontalBox } from "std-widgets.slint";
 
 export struct TimerData {
-//    targetDate: int,
+	id: string,
+	time-left: string,
 }
 
 export component TimerRow inherits Rectangle {
     in-out property<TimerData> data;
     HorizontalBox {
-		height: 60px;
 		Rectangle {
 			Text {
-				text: "5:42";
+				text: root.data.time-left;
 			}
 		}
-        Button {
-            text: "Edit";
-        }
-        Button {
-            text: "Delete";
-        }
-     }
+		Rectangle {
+			HorizontalBox {
+				edit-button := Button {
+					text: "Edit";
+				}
+				delete-button := Button {
+					text: "Delete";
+				}
+			}
+			stop-button := Button {
+				text: "Stop";
+			}
+		}
+	}
+	states [
+		running when data.time-left != "Done" : {
+			edit-button.visible: true;
+			delete-button.visible: true;
+			stop-button.visible: false;
+		}
+		running when data.time-left == "Done" : {
+			edit-button.visible: false;
+			delete-button.visible: false;
+			stop-button.visible: true;
+		}
+	]
 }

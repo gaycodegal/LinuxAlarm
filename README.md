@@ -7,6 +7,5 @@ Simple Alarm setting tool for Linux
 Needs to be ran with this if you want SIGINT (^C) to kill the app.
 
 ```bash
-alarm_slint/run.sh
+./alarm_slint/run.sh --alarm-sound ~/Music/alarm.mp3 
 ```
-	

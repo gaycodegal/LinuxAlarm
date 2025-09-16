@@ -2,7 +2,7 @@ import { ListView, VerticalBox } from "std-widgets.slint";
 import { TimerRow, TimerData } from "timer-row.slint";
 
 export component AlarmListWindow inherits Window {
-    in property<[TimerData]> timer-list: [{}, {}];
+    in property<[TimerData]> timer-list: [];
 
     callback key-pressed(KeyEvent) -> bool;
 	min-width: 320px;
@@ -18,7 +18,9 @@ export component AlarmListWindow inherits Window {
 		VerticalBox {
 			ListView {
 				for data[i] in timer_list
-				: TimerRow { }
+				: TimerRow {
+					data: data;
+				}
 			}
 		}
 	}
