@@ -5,6 +5,8 @@ export component AlarmListWindow inherits Window {
     in property<[TimerData]> timer-list: [];
 
     callback key-pressed(KeyEvent) -> bool;
+    callback stop-timer(TimerData);
+
 	min-width: 320px;
 	min-height: 480px;
 
@@ -22,6 +24,12 @@ export component AlarmListWindow inherits Window {
 				for data[i] in timer_list
 				: TimerRow {
 					data: data;
+					stop-timer => {
+						root.stop-timer(data);
+					}
+					delete-timer => {
+						root.stop-timer(data);
+					}
 				}
 			}
 		}

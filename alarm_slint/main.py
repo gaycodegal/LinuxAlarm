@@ -25,6 +25,7 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
     def __init__(self):
         super().__init__()
         now = datetime.now()
+        now = now - timedelta(microseconds=now.microsecond)
         self.timers = [{
             "id": str(uuid.uuid4()),
             "duration": timedelta(seconds=duration),
@@ -36,25 +37,12 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
 
     def set_elapsed_time(self):
         now = datetime.now()
+        micros = timedelta(microseconds=now.microsecond)
+        now = now - micros
         for timer in self.timers:
-            diff = int((timer["start"] + timer["duration"] - now).total_seconds())
-            seconds = diff % 60
-            minutes = (diff // 60) % 60
-            hours = diff // 60 // 60
-            if diff <= 0:
-                timer["time-left"] = "Done"
-                if "alarm-sound" not in timer:
-                    try:
-                        timer["alarm-sound"] = playsound(
-                            args.alarm_sound, block=False)
-                    except:
-                        timer["alarm-sound"] = None
-                        print("\a")
-            else:
-                if hours > 0:
-                    timer["time-left"] = f"{hours}h {minutes:02}m"
-                else:
-                    timer["time-left"] = f"{minutes}:{seconds:02}"
+            done = update_display_time(now, timer)
+            if done:
+                play_time_sound(timer)
         self.timer_list = slint.ListModel()
         for timer in self.timers:
             self.timer_list.append({
@@ -63,10 +51,29 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             })
 
     def time_tick(self):
+        now = datetime.now()
+        micros = timedelta(microseconds=now.microsecond)
+
         self.set_elapsed_time()
-        slint.Timer.single_shot(timedelta(seconds=1),
+        slint.Timer.single_shot(timedelta(seconds=1.01) - micros,
                                 lambda: self.time_tick())
 
+    @slint.callback
+    def stop_timer(self, to_delete):
+        i = next(
+            (i
+             for i, timer in enumerate(self.timers)
+             if timer["id"] == to_delete.id),
+            None)
+        if i == None:
+            return
+        timer = self.timers.pop(i)
+        sound = timer.get("alarm-sound", None)
+        if sound is not None:
+            sound.stop()
+        self.set_elapsed_time()
+        if len(self.timers) == 0:
+            self.hide()
 
     @slint.callback
     def key_pressed(self, event):
@@ -78,6 +85,30 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             return True
         return False
 
+def play_time_sound(timer):
+    if "alarm-sound" not in timer:
+        try:
+            timer["alarm-sound"] = playsound(
+                args.alarm_sound, block=False)
+        except:
+            timer["alarm-sound"] = None
+            print("\a")
+
+def update_display_time(now, timer):
+    diff = int((timer["start"] + timer["duration"] - now).total_seconds())
+    seconds = diff % 60
+    minutes = (diff // 60) % 60
+    hours = diff // 60 // 60
+    if diff <= 0:
+        timer["time-left"] = "Done"
+        return True
+    else:
+        if hours > 0:
+            timer["time-left"] = f"{hours}h {minutes:02}m"
+        else:
+            timer["time-left"] = f"{minutes}:{seconds:02}"
+        return False
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
