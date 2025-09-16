@@ -53,6 +53,8 @@ def convert_time_to_durations(raw_time):
 
 
 def get_nth(lst, n, repeat = True):
+    if len(lst) == 0:
+        return None
     if n < len(lst):
         return lst[n]
     if repeat:

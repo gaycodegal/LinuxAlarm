@@ -13,6 +13,7 @@ from datetime import datetime
 from time_helpers import get_nth, play_time_sound, update_display_time
 from command_line_helpers import parse_args
 
+
 try:
     slint.loader.ui.alarm_list_window.AlarmListWindow
 except slint.CompileError as e:
@@ -22,16 +23,15 @@ except slint.CompileError as e:
     sys.exit(1)
 
 args = None
-global_timers = [5]
 
 class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
-    def __init__(self, timers = []):
+    def __init__(self, timers = [], cli_args = None):
         super().__init__()
         self.timers = []
-        self.add_timers(timers)
+        self.add_timers(timers, cli_args or args)
         self.time_tick()
 
-    def add_timers(self, timers):
+    def add_timers(self, timers, cli_args):
         now = datetime.now()
         now = now - timedelta(microseconds=now.microsecond)
 
@@ -39,7 +39,7 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             "id": str(uuid.uuid4()),
             "duration": timedelta(seconds=duration),
             "start": now,
-            "sound": get_nth(args.alarm_sound, index)
+            "sound": get_nth(cli_args.alarm_sound, index)
         } for index, duration in enumerate(timers)]
         self.timers.extend(new_timers)
 
@@ -99,12 +99,16 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             self.hide()
             return True
         return False
-    
-if __name__ == "__main__":
+
+def main():
+    global args
+    timers = []
     args = parse_args(__doc__)
     if len(args.alarm) > 0:
-        global_timers = args.alarm
-    alarm_list_window = AlarmListWindow(global_timers)
+        timers = args.alarm
+    alarm_list_window = AlarmListWindow(timers)
     alarm_list_window.show()
     alarm_list_window.run()
 
+if __name__ == "__main__":
+    main()
