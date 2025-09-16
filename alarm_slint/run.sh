@@ -6,7 +6,7 @@ handler()
 }
 
 
-python3 $(dirname "$(realpath $0)")/main.py $@ &
+python3 $(dirname "$(realpath $0)")/main.py "$@" &
 PID=$!
 
 trap handler SIGINT

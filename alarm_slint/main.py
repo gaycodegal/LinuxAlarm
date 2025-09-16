@@ -1,3 +1,8 @@
+"""Simple visual timer.
+
+Play a sound after timer(s) count down.
+"""
+
 import slint
 import sys
 import os
@@ -7,7 +12,7 @@ from playsound3 import playsound
 from datetime import timedelta
 from datetime import datetime
 import argparse
-
+from time_helpers import convert_times_to_durations, play_time_sound, update_display_time
 
 try:
     slint.loader.ui.alarm_list_window.AlarmListWindow
@@ -90,52 +95,28 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             self.hide()
             return True
         return False
-
-def play_time_sound(timer):
-    if "alarm-sound" not in timer:
-        try:
-            timer["alarm-sound"] = playsound(
-                args.alarm_sound, block=False)
-        except:
-            timer["alarm-sound"] = None
-            print("\a")
-
-def update_display_time(now, timer):
-    diff = int((timer["start"] + timer["duration"] - now).total_seconds())
-    seconds = diff % 60
-    minutes = (diff // 60) % 60
-    hours = diff // 60 // 60
-    if diff <= 0:
-        timer["time-left"] = "Done"
-        return True
-    else:
-        if hours > 0:
-            timer["time-left"] = f"{hours}h {minutes:02}m"
-        else:
-            timer["time-left"] = f"{minutes}:{seconds:02}"
-        return False
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        '--alarm-sound',
-        help='audio file to be played back',
+        '-s', '--alarm-sound',
+        help='Audio file to be played back',
         default="alarm.mp3")
     parser.add_argument(
-        '--alarm',
-        help='alarm duration in seconds',
+        '-a', '--alarm',
+        help="Alarm duration. e.g. '4h 30m 20s'. Numbers without units like '100' will be interpreted as 100 seconds",
         action='append',
-        type=int,
+        type = str,
         default=[])
     
     parser.add_argument(
         '--escape-quits',
-        help='should the escape key quit this app',
+        help='Should the escape key quit this app',
         action=argparse.BooleanOptionalAction,
         default=True)
     args = parser.parse_args()
     if len(args.alarm) > 0:
-        global_timers = args.alarm
+        global_timers = convert_times_to_durations(args.alarm)
     alarm_list_window = AlarmListWindow()
     alarm_list_window.show()
     alarm_list_window.run()
