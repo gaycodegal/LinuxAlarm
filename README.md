@@ -29,5 +29,5 @@ not work right with this codebase
 Needs to be ran with this if you want SIGINT (^C) to kill the app.
 
 ```bash
-./alarm_slint/run.sh --alarm 5 --alarm-sound ~/Music/alarm.mp3
+./alarm_slint/run.sh --alarm '5m 30s' --alarm-sound ~/Music/alarm.mp3
 ```
