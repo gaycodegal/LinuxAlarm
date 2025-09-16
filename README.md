@@ -26,7 +26,9 @@ not work right with this codebase
 
 ## Running
 
-Needs to be ran with this if you want SIGINT (^C) to kill the app.
+See [USAGE.txt](./USAGE.txt) for more.
+
+Needs to be ran with via bash script helper if you want SIGINT (^C) to kill the app.
 
 ```bash
 ./alarm_slint/run.sh --alarm '5m 30s' --alarm-sound ~/Music/alarm.mp3
