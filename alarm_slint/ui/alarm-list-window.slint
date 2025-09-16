@@ -9,6 +9,8 @@ export component AlarmListWindow inherits Window {
 	min-height: 480px;
 
 	forward-focus: window-focus-scope;
+	title: "Alarms";
+	
     window-focus-scope := FocusScope {
 		key-pressed(event) => {
 			return root.key-pressed(event) ? accept : reject;
