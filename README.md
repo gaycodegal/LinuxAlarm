@@ -2,7 +2,7 @@
 
 Simple Alarm setting tool for Linux
 
-Sets one or more timers for N seconds that will display in a ui window. Plays a song of your choosing on alarm completion.
+Sets one or more timers that will display in a ui window. Plays a song of your choosing on alarm completion.
 
 Presumably more features to come. Intended for use with other command line
 programs that may wish to set an alarm programatically, like a digital
