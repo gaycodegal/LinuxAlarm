@@ -1,4 +1,5 @@
 import re
+from playsound3 import playsound
 
 part_splitter = re.compile('([a-z])')
 
@@ -7,7 +8,7 @@ def play_time_sound(timer):
     if "alarm-sound" not in timer:
         try:
             timer["alarm-sound"] = playsound(
-                args.alarm_sound, block=False)
+                timer["sound"], block=False)
         except:
             timer["alarm-sound"] = None
             print("\a")
@@ -49,3 +50,11 @@ def convert_time_to_durations(raw_time):
         elif time_code == 's':
             duration += int(time_parts[i])
     return duration
+
+
+def get_nth(lst, n, repeat = True):
+    if n < len(lst):
+        return lst[n]
+    if repeat:
+        return lst[-1]
+    return lst[n%len(lst)]

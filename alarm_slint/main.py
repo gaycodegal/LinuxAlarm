@@ -8,11 +8,10 @@ import sys
 import os
 import uuid
 import datetime
-from playsound3 import playsound
 from datetime import timedelta
 from datetime import datetime
 import argparse
-from time_helpers import convert_times_to_durations, play_time_sound, update_display_time
+from time_helpers import get_nth, convert_times_to_durations, play_time_sound, update_display_time
 
 try:
     slint.loader.ui.alarm_list_window.AlarmListWindow
@@ -34,7 +33,8 @@ class AlarmListWindow(slint.loader.ui.alarm_list_window.AlarmListWindow):
             "id": str(uuid.uuid4()),
             "duration": timedelta(seconds=duration),
             "start": now,
-        } for duration in global_timers]
+            "sound": get_nth(args.alarm_sound, index)
+        } for index, duration in enumerate(global_timers)]
         
 
         self.time_tick()
@@ -100,11 +100,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '-s', '--alarm-sound',
-        help='Audio file to be played back',
-        default="alarm.mp3")
+        help='Audio file to be played back, including this argument '
+        + 'multiple times will result in per-timer alarm sound',
+        action='append',
+        default=[])
     parser.add_argument(
         '-a', '--alarm',
-        help="Alarm duration. e.g. '4h 30m 20s'. Numbers without units like '100' will be interpreted as 100 seconds",
+        help="Alarm duration. e.g. '4h 30m 20s'. Numbers "
+        + "without units like '100' will be interpreted as 100 seconds",
         action='append',
         type = str,
         default=[])
